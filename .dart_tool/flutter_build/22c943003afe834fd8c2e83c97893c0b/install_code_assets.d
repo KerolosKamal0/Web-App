@@ -1,0 +1,1 @@
+ /Users/kerolos/Downloads/flut/gi/Web-App/.dart_tool/flutter_build/22c943003afe834fd8c2e83c97893c0b/native_assets.json: 
