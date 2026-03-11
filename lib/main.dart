@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  await Supabase.initialize(
+    url: 'https://zseboiqvdujpgkvariyh.supabase.co',
+    anonKey: 'sb_publishable_J2-qlKOj5hy80ZpykEW4Cg_pHFRUCz9',
+  );
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -56,6 +61,10 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  String name = "";
+  String email = "";
+
+  final supabase = Supabase.instance.client;
 
   void _incrementCounter() {
     setState(() {
@@ -68,6 +77,21 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Future<void> getData() async {
+    final data = await supabase.from('Users').select();
+    // print(data);
+    setState(() {
+      name = data[0]["name"] ?? "";
+      email = data[0]["email"] ?? "";
+    });
+  }
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -76,16 +100,17 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+    var appBar = AppBar(
+      // TRY THIS: Try changing the color here to a specific color (to
+      // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
+      // change color while the other colors stay the same.
+      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      // Here we take the value from the MyHomePage object that was created by
+      // the App.build method, and use it to set our appbar title.
+      title: Text(widget.title),
+    );
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
+      appBar: appBar,
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
@@ -105,6 +130,9 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: .center,
           children: [
+            Text('Name: $name', style: Theme.of(context).textTheme.bodyLarge),
+            Text('Email: $email', style: Theme.of(context).textTheme.bodyLarge),
+            SizedBox(height: 30),
             const Text('You have pushed the button this many times:'),
             Text(
               '$_counter',
